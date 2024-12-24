@@ -1,0 +1,31 @@
+{
+  "name": "dcmjs-stream",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c"
+  },
+  "exports": {
+    "import": "./src/index.js",
+    "require": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dcmjs": "^0.37.0",
+    "pako": "^2.1.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.29.1"
+  }
+}
