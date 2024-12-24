@@ -6,7 +6,7 @@ import {
     VM_DELIMITER,
     PADDING_SPACE,
     PADDING_NULL
-} from "../constants/dicom.js";
+} from "./constants/dicom.js";
 
 
 function rtrim(str) {

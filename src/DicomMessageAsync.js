@@ -6,7 +6,7 @@ import {
     EXPLICIT_LITTLE_ENDIAN,
     DEFLATED_EXPLICIT_LITTLE_ENDIAN,
     VM_DELIMITER
-} from "../constants/dicom.js";
+} from "./constants/dicom.js";
 import { TagAsync } from "./TagAsync.js";
 import { DicomReadableBufferStream } from "./DicomReadableBufferStream.js";
 

@@ -3,9 +3,15 @@ import terser from "@rollup/plugin-terser";
 
 export default {
     input: "src/index.js",
-    output: {
-        file: "dist/index.js",
-        format: "cjs"
-    },
+    output: [
+        {
+            file: "dist/index.mjs",
+            format: "esm"
+        },
+        {
+            file: "dist/index.cjs",
+            format: "cjs"
+        }
+    ],
     plugins: [nodeResolve(), terser()]
 };
