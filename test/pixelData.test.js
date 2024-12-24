@@ -11,7 +11,7 @@ const __dirname = import.meta.dirname;
 
 test("frame number should be same as old dcmjs", async () => {
     let filename = path.join(__dirname, "../examples/data/0009.DCM");
-    let dataset = await DicomMessageAsync.readFile(filename, {
+    let { dicomDict, bufferStream } = await DicomMessageAsync.readFile(filename, {
         untilTag: null
     });
 
@@ -20,12 +20,12 @@ test("frame number should be same as old dcmjs", async () => {
         untilTag: null
     });
 
-    assert.equal(dataset.dict["7FE00010"].Value.length, dataset2.dict["7FE00010"].Value.length);
+    assert.equal(dicomDict.dict["7FE00010"].Value.length, dataset2.dict["7FE00010"].Value.length);
 });
 
 test("frames' length should be same as old dcmjs", async () => {
     let filename = path.join(__dirname, "../examples/data/0009.DCM");
-    let dataset = await DicomMessageAsync.readFile(filename, {
+    let { dicomDict, bufferStream } = await DicomMessageAsync.readFile(filename, {
         untilTag: null
     });
 
@@ -34,14 +34,14 @@ test("frames' length should be same as old dcmjs", async () => {
         untilTag: null
     });
 
-    for (let i = 0; i < dataset.dict["7FE00010"].Value.length; i++) {
-        assert.equal(dataset.dict["7FE00010"].Value[i].length, dataset2.dict["7FE00010"].Value[i].byteLength);
+    for (let i = 0; i < dicomDict.dict["7FE00010"].Value.length; i++) {
+        assert.equal(dicomDict.dict["7FE00010"].Value[i].length, dataset2.dict["7FE00010"].Value[i].byteLength);
     }
 });
 
 test("frames' buffer should be same as old dcmjs", async () => {
     let filename = path.join(__dirname, "../examples/data/0009.DCM");
-    let dataset = await DicomMessageAsync.readFile(filename, {
+    let { dicomDict, bufferStream } = await DicomMessageAsync.readFile(filename, {
         untilTag: null
     });
 
@@ -50,7 +50,7 @@ test("frames' buffer should be same as old dcmjs", async () => {
         untilTag: null
     });
 
-    for (let i = 0; i < dataset.dict["7FE00010"].Value.length; i++) {
-        assert.equal(dataset.dict["7FE00010"].Value[i].length, Buffer.from(dataset2.dict["7FE00010"].Value[i]).length);
+    for (let i = 0; i < dicomDict.dict["7FE00010"].Value.length; i++) {
+        assert.equal(dicomDict.dict["7FE00010"].Value[i].length, Buffer.from(dataset2.dict["7FE00010"].Value[i]).length);
     }
 });

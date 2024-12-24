@@ -282,7 +282,10 @@ class DicomMessageAsync {
         let dicomDict = new DicomDict(metaHeader);
         dicomDict.dict = objects;
 
-        return dicomDict;
+        return {
+            dicomDict,
+            bufferStream
+        };
     }
 }
 

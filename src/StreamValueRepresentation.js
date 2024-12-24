@@ -7,7 +7,6 @@ import {
     PADDING_SPACE,
     PADDING_NULL
 } from "../constants/dicom.js";
-import { DicomReadableBufferStream } from "./DicomReadableBufferStream.js";
 
 
 function rtrim(str) {
