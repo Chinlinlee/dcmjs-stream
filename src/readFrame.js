@@ -34,10 +34,6 @@ async function readFrame(stream, frameIndex = 0) {
 
     } 
 
-    if (frameIndex < 0 || frameIndex >= numberOfFrames) {
-        throw new Error(`Frame index ${frameIndex} out of range (0-${numberOfFrames - 1})`);
-    }
-
     const SequenceItemTag = 0xfffee000;
     const SequenceDelimiterTag = 0xfffee0dd;
     
