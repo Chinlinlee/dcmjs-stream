@@ -56,12 +56,20 @@ async function readFrame(stream, frameIndex = 0) {
     };
 
     if (offsets.length > 0) {
+        if (offsets.length === 1 && frameIndex === 0) {
+            return await readSingleFrame();
+        }
+
+        if (offsets.length === 1 && frameIndex !== 0) {
+            throw new Error(`Frame index ${frameIndex} out of range, only found 1 frames`);
+        }
+
         for(let i = 1 ; i < offsets.length; i++) {
             if (i === frameIndex + 1) break;
 
             let frameLength = offsets[i] - offsets[i - 1];
             if(frameLength > 0) {
-                await stream.increment(frameLength);
+                await getNextSequenceItemData(stream);
             }
         }
     } else {
@@ -75,7 +83,7 @@ async function readFrame(stream, frameIndex = 0) {
             currentFrame++;
         }
     }
-    return [await readSingleFrame()];
+    return await readSingleFrame();
 }
 
 export { readFrame };
