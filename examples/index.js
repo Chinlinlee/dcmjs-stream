@@ -13,5 +13,5 @@ const __dirname = import.meta.dirname;
         untilTag: null
     });
 
-    console.log(dataset.dict["7FE00010"].Value.length);
+    console.log(dataset.dicomDict.dict["7FE00010"].Value.length);
 })();

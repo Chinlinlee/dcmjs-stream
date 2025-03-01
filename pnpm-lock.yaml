@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       dcmjs:
-        specifier: ^0.37.0
-        version: 0.37.0
+        specifier: ^0.38.2
+        version: 0.38.2
       pako:
         specifier: ^2.1.0
         version: 2.1.0
@@ -198,8 +198,8 @@ packages:
   core-js-pure@3.39.0:
     resolution: {integrity: sha512-7fEcWwKI4rJinnK+wLTezeg2smbFFdSBP6E2kQZNbnzM2s1rpKQ6aaRteZSSg7FLU3P0HGGVo/gbpfanU36urg==}
 
-  dcmjs@0.37.0:
-    resolution: {integrity: sha512-r9LD3AnPn7iUyIY3GreSN6j6UT51RT6vFMnDIDy6s6QW9svzAL+1E26gUW+nSc7HZlkiQ9pWI9AwV+w4KtAEmQ==}
+  dcmjs@0.38.2:
+    resolution: {integrity: sha512-+wzHsBHRARXD1YBVf9JgmouF0m0Hp+Vm6VD/vnoZdLMSl9XoqlOKrZ2mpYaxYtnCd9KHwCrzDcC/s5KGttrIgA==}
 
   deepmerge@4.3.1:
     resolution: {integrity: sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==}
@@ -423,7 +423,7 @@ snapshots:
 
   core-js-pure@3.39.0: {}
 
-  dcmjs@0.37.0:
+  dcmjs@0.38.2:
     dependencies:
       '@babel/runtime-corejs3': 7.26.0
       adm-zip: 0.5.16

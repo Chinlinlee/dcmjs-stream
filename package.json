@@ -20,7 +20,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dcmjs": "^0.37.0",
+    "dcmjs": "^0.38.2",
     "pako": "^2.1.0"
   },
   "devDependencies": {
