@@ -15,7 +15,7 @@ class DicomReadableBufferStream {
         this.isStreamEnded = false
 
         
-        this.fileStream = createReadStream(filename, { highWaterMark: 1024 });
+        this.fileStream = createReadStream(filename);
 
         this.fileStream.on('end', () => {
             this.isStreamEnded = true;
