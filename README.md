@@ -20,4 +20,4 @@ const frame = await readFrame(dataset.bufferStream, 136);
 
 Below is the memory benchmark result of reading a 700MB DICOM file.
 
-![Memory Benchmark Result](memory-benchmark.png)
+![Memory Benchmark Result](https://raw.githubusercontent.com/Chinlinlee/dcmjs-stream/main/memory-benchmark.png)

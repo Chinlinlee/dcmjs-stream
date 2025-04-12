@@ -152,11 +152,33 @@ class BinaryRepresentation extends StreamValueRepresentation {
                         const itemLength = await stream.readUint32();
                         return await stream.readNBytes(itemLength);
                     } else if (nextTag.is(SequenceDelimiterTag)) {
-                        if (await stream.readUint32() !== 0) {
+                        let sequenceDelimiterItem = await stream.readUint32();
+                        if (sequenceDelimiterItem !== 0) {
                             throw Error(
                                 "SequenceDelimiterItem tag value was not zero"
                             );
                         }
+
+                        let nextTagBuffer = Buffer.alloc(4);
+                        let groupBuffer = nextTag.value >>> 16 & 0xffff;
+                        let elementBuffer = nextTag.value & 0xffff;
+                        if (stream.isLittleEndian) {
+                            nextTagBuffer.writeUint16LE(groupBuffer, 0);
+                            nextTagBuffer.writeUint16LE(elementBuffer, 2);
+                        } else {
+                            nextTagBuffer.writeUint16BE(groupBuffer, 0);
+                            nextTagBuffer.writeUint16BE(elementBuffer, 2);
+                        }
+
+                        stream.remainingBuffer = Buffer.concat([Buffer.from(nextTagBuffer), stream.remainingBuffer]);
+                        let sequenceDelimiterItemBuffer = Buffer.alloc(4);
+                        if (stream.isLittleEndian) {
+                            sequenceDelimiterItemBuffer.writeUint32LE(sequenceDelimiterItem, 0);
+                        } else {
+                            sequenceDelimiterItemBuffer.writeUint32BE(sequenceDelimiterItem, 0);
+                        }
+                        stream.remainingBuffer = Buffer.concat([Buffer.from(sequenceDelimiterItemBuffer), stream.remainingBuffer]);
+
                         return null;
                     }
 
