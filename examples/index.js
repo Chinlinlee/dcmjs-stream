@@ -14,5 +14,4 @@ const __dirname = import.meta.dirname;
     });
 
     console.log(dataset.dicomDict.dict["7FE00010"].Value.length);
-    console.log(dataset.dicomDict.dict["7FE00010"].Value[0].length);
 })();

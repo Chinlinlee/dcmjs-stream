@@ -9,7 +9,6 @@ import {
 } from "./constants/dicom.js";
 import { TagAsync } from "./TagAsync.js";
 import { DicomReadableBufferStream } from "./DicomReadableBufferStream.js";
-import { Readable } from "stream";
 
 const singleVRs = ["SQ", "OF", "OW", "OB", "UN", "LT"];
 const encodingMapping = {
@@ -49,23 +48,12 @@ const encodingMapping = {
     gbk: "gbk"
 };
 
-function convertBinaryToStream(binary) {
-    const buffer = new Uint8Array(binary);
-    return new Readable({
-        read() {
-            this.push(buffer);
-            this.push(null);
-        }
-    });
-}
-
 class DicomMessageAsync {
     static async _readTag(stream, syntax, options = {
         untilTag: null,
-        includeUntilTagValue: false,
-        binaryAsStream: false
+        includeUntilTagValue: false
     }) {
-        const { untilTag, includeUntilTagValue, binaryAsStream } = options;
+        const { untilTag, includeUntilTagValue } = options;
         let implicit = syntax == IMPLICIT_LITTLE_ENDIAN ? true : false,
             isLittleEndian =
                 syntax == IMPLICIT_LITTLE_ENDIAN ||
@@ -176,15 +164,8 @@ class DicomMessageAsync {
                 rawValues = rawValue;
                 values = value;
             } else if (vr.type == "OW" || vr.type == "OB") {
-
-                if (binaryAsStream) {
-                    rawValues = rawValue.length > 0 ? rawValue.map(item => convertBinaryToStream(item)) : [];
-                    values = value.length > 0 ? value.map(item => convertBinaryToStream(item)) : [];
-                } else {
-                    rawValues = rawValue;
-                    values = value;
-                }
-
+                rawValues = rawValue;
+                values = value;
             } else {
                 Array.isArray(value) ? (values = value) : values.push(value);
                 Array.isArray(rawValue)
@@ -209,8 +190,7 @@ class DicomMessageAsync {
         options = {
             ignoreErrors: false,
             untilTag: null,
-            includeUntilTagValue: false,
-            binaryAsStream: false
+            includeUntilTagValue: false
         }
     ) {
         const { ignoreErrors, untilTag } = options;
@@ -265,7 +245,7 @@ class DicomMessageAsync {
     /**
      * 
      * @param {string} filename 
-     * @param { { ignoreErrors: boolean, untilTag: string, includeUntilTagValue: boolean, noCopy: boolean, forceStoreRaw: boolean, binaryAsStream?: boolean } } options
+     * @param { { ignoreErrors: boolean, untilTag: string, includeUntilTagValue: boolean, noCopy: boolean, forceStoreRaw: boolean } } options
      */
     static async readFile(filename, options) {
         let useSyntax = EXPLICIT_LITTLE_ENDIAN;
@@ -289,10 +269,7 @@ class DicomMessageAsync {
 
         let metaReadBufferStream = await bufferStream.readNBytes(metaLength);
         let metaStream = new ReadBufferStream(new Uint8Array(metaReadBufferStream).buffer);
-        const metaHeader = await DicomMessage._read(metaStream, useSyntax, {
-            ...options,
-            binaryAsStream: false
-        });
+        const metaHeader = await DicomMessage._read(metaStream, useSyntax, options);
 
         let mainSyntax = metaHeader["00020010"].Value[0];
         if (mainSyntax === DEFLATED_EXPLICIT_LITTLE_ENDIAN) {
