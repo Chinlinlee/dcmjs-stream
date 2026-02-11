@@ -5,7 +5,8 @@ import { TagAsync } from "./TagAsync.js";
 import {
     VM_DELIMITER,
     PADDING_SPACE,
-    PADDING_NULL
+    PADDING_NULL,
+    PN_COMPONENT_DELIMITER
 } from "./constants/dicom.js";
 
 
@@ -23,7 +24,10 @@ function toWindows(inputArray, size) {
 class StreamValueRepresentation extends ValueRepresentation {
     async read(stream, length, syntax, readOptions = { forceStoreRaw: false }) {
         if (this.fixed && this.maxLength) {
-            if (!length) return this.defaultValue;
+            if (!length) return {
+                rawValue: this.defaultValue,
+                value: this.defaultValue
+            };
             if (this.maxLength != length)
                 log.error(
                     "Invalid length for fixed length tag, vr " +
@@ -123,6 +127,11 @@ class EncodedStringRepresentation extends StreamValueRepresentation {
 }
 
 class BinaryRepresentation extends StreamValueRepresentation {
+
+    constructor(type) {
+        super(type);
+        this._storeRaw = false;
+    }
 
     async readBytes(stream, length) {
         if (length == 0xffffffff) {
@@ -294,9 +303,21 @@ class DateValue extends AsciiStringRepresentation {
     constructor(value) {
         super("DA", value);
         this.maxLength = 8;
+        this.rangeMatchingMaxLength = 18;
         this.padByte = PADDING_SPACE;
         //this.fixed = true;
         this.defaultValue = "";
+    }
+
+    checkLength(value) {
+        if (typeof value === "string" || value instanceof String) {
+            const isRangeQuery = value.includes("-");
+            return (
+                value.length <=
+                (isRangeQuery ? this.rangeMatchingMaxLength : this.maxLength)
+            );
+        }
+        return true;
     }
 }
 
@@ -378,7 +399,19 @@ class DateTime extends AsciiStringRepresentation {
     constructor() {
         super("DT");
         this.maxLength = 26;
+        this.rangeMatchingMaxLength = 54;
         this.padByte = PADDING_SPACE;
+    }
+
+    checkLength(value) {
+        if (typeof value === "string" || value instanceof String) {
+            const isRangeQuery = value.includes("-");
+            return (
+                value.length <=
+                (isRangeQuery ? this.rangeMatchingMaxLength : this.maxLength)
+            );
+        }
+        return true;
     }
 }
 
@@ -570,16 +603,12 @@ class PersonName extends EncodedStringRepresentation {
     }
 
     async readBytes(stream, length) {
-        let paddedString = await this.readPaddedEncodedString(stream, length);
-
-        return paddedString.split(
-            String.fromCharCode(VM_DELIMITER)
-        );
+        return await this.readPaddedEncodedString(stream, length);
     }
 
     applyFormatting(value) {
         const parsePersonName = valueStr =>
-            dicomJson.pnConvertToJsonObject(valueStr, false);
+            dicomJson.pnConvertToJsonObject(valueStr);
 
         if (Array.isArray(value)) {
             return value.map(valueStr => parsePersonName(valueStr));
@@ -822,7 +851,8 @@ class ShortText extends EncodedStringRepresentation {
 class TimeValue extends AsciiStringRepresentation {
     constructor() {
         super("TM");
-        this.maxLength = 14;
+        this.maxLength = 16;
+        this.rangeMatchingMaxLength = 28;
         this.padByte = PADDING_SPACE;
     }
 
@@ -832,6 +862,17 @@ class TimeValue extends AsciiStringRepresentation {
 
     applyFormatting(value) {
         return rtrim(value);
+    }
+
+    checkLength(value) {
+        if (typeof value === "string" || value instanceof String) {
+            const isRangeQuery = value.includes("-");
+            return (
+                value.length <=
+                (isRangeQuery ? this.rangeMatchingMaxLength : this.maxLength)
+            );
+        }
+        return true;
     }
 }
 
@@ -983,7 +1024,7 @@ class ParsedUnknownValue extends BinaryRepresentation {
         this.noMultiple = true;
         this._isBinary = true;
         this._allowMultiple = false;
-        this._isExplicit = true;
+        this._isLength32 = true;
         this._storeRaw = true;
     }
 
