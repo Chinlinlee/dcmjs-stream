@@ -1,7 +1,4 @@
-import fs from "fs";
 import path from "path";
-import dcmjs from "dcmjs";
-const { DicomMessage } = dcmjs.data;
 import { DicomMessageAsync } from "../src/DicomMessageAsync.js";
 
 
